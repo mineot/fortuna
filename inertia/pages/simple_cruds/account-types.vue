@@ -1,6 +1,85 @@
 <template>
-  <h1>Account Types</h1>
+  <Table>
+    <template #headers>
+      <TableHeader :label="t('app.terms.name')" />
+      <TableHeader :label="t('app.terms.description')" />
+      <TableHeader fit />
+    </template>
+    <template #rows>
+      <TableRow v-for="dataItem in dataList.data" :key="dataItem.id">
+        <TableColumn :value="dataItem.name" />
+        <TableColumn :value="dataItem.description" />
+        <TableColumn>
+          <TableAction
+            icon="bi-pencil-fill"
+            severity="secondary"
+            :title="t('app.terms.edit')"
+            :data="{ type: 'edit', id: dataItem.id }"
+            @click="onAction($event)"
+          />
+          <TableAction
+            icon="bi-trash3-fill"
+            severity="danger"
+            :title="t('app.terms.delete')"
+            :data="{ type: 'delete', id: dataItem.id }"
+            @click="onAction($event)"
+          />
+        </TableColumn>
+      </TableRow>
+    </template>
+  </Table>
 </template>
+
+<script setup lang="ts">
+import Table from '~/components/table/table.vue';
+import TableHeader from '~/components/table/table-header.vue';
+import TableRow from '~/components/table/table-row.vue';
+import TableColumn from '~/components/table/table-column.vue';
+import TableAction from '~/components/table/table-action.vue';
+
+import { list, Meta } from '~/helpers/app.helper';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useI18n } from '~/lib/i18n';
+import { TableDataAction } from '~/components/table/table.types';
+import { useAppStore } from '~/stores/app.store';
+
+type AccountType = { id: number; name: string; description: string };
+type DataList = { data: AccountType[]; meta: Meta };
+
+const { t } = useI18n();
+const { startLoading, stopLoading, setTitle, clearTitle } = useAppStore();
+const dataList = ref<DataList>({ data: [], meta: {} as Meta });
+
+function onAction(tda: TableDataAction) {
+  console.log(tda);
+}
+
+async function refreshDataList() {
+  try {
+    startLoading();
+
+    dataList.value = await list<AccountType[]>({
+      url: 'account-types/list',
+      key: 'accountTypes',
+      options: { t },
+    });
+  } catch (error) {
+    // FIXME: ajustar esse toast de acordo com as outras telas profile e settings
+    // toast.error(t('app.terms.error_occurred'));
+  } finally {
+    stopLoading();
+  }
+}
+
+onMounted(async () => {
+  setTitle(t('app.accountTypes.title'));
+  await refreshDataList();
+});
+
+onUnmounted(() => {
+  clearTitle();
+});
+</script>
 
 <!-- <template>
   <Table

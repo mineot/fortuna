@@ -17,21 +17,28 @@ export default class AccountTypesController {
 
   async list({ request, auth, response }: HttpContext) {
     const userId = auth.user!.id;
-    const searchText = request.input('searchText', null);
+    const searchByName = request.input('searchByName', null);
+    const searchByDescription = request.input('searchByDescription', null);
+    const orderByName = request.input('orderByName', 'asc');
+    const orderByDescription = request.input('orderByDescription', 'asc');
     const page = request.input('page', 1);
+    const limit = request.input('limit', 5);
 
     const accountTypes = await AccountType.query()
       .where('user_id', userId)
       .where('archived', false)
-      .orderBy('name', 'asc')
+      .orderBy('name', orderByName)
+      .orderBy('description', orderByDescription)
       .where((query) => {
-        if (searchText) {
-          query
-            .where('name', 'like', `%${searchText}%`)
-            .orWhere('description', 'like', `%${searchText}%`);
+        if (searchByName) {
+          query.where('name', 'like', `%${searchByName}%`);
+        }
+
+        if (searchByDescription) {
+          query.where('description', 'like', `%${searchByDescription}%`);
         }
       })
-      .paginate(page, 5);
+      .paginate(page, limit);
 
     return response.ok({ accountTypes });
   }
