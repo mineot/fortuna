@@ -1,5 +1,5 @@
 <template>
-  <Table>
+  <Table :meta="dataList.meta" @page-change="onPageChange" @limit-change="onLimitChange">
     <template #headers>
       <TableHeader :label="t('app.terms.name')" />
       <TableHeader :label="t('app.terms.description')" />
@@ -40,15 +40,34 @@ import TableAction from '~/components/table/table-action.vue';
 import { list, Meta } from '~/helpers/app.helper';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from '~/lib/i18n';
-import { TableDataAction } from '~/components/table/table.types';
 import { useAppStore } from '~/stores/app.store';
+
+import {
+  PAGINATE_DEFAULT_LIMIT,
+  PAGINATE_FIRST_PAGE,
+  TableDataAction,
+} from '~/components/table/table.types';
 
 type AccountType = { id: number; name: string; description: string };
 type DataList = { data: AccountType[]; meta: Meta };
 
 const { t } = useI18n();
 const { startLoading, stopLoading, setTitle, clearTitle } = useAppStore();
+
 const dataList = ref<DataList>({ data: [], meta: {} as Meta });
+const page = ref(PAGINATE_FIRST_PAGE);
+const limit = ref(PAGINATE_DEFAULT_LIMIT);
+
+function onPageChange(newPage: number) {
+  page.value = newPage;
+  refreshDataList();
+}
+
+function onLimitChange(newLimit: number) {
+  limit.value = newLimit;
+  page.value = PAGINATE_FIRST_PAGE;
+  refreshDataList();
+}
 
 function onAction(tda: TableDataAction) {
   console.log(tda);
@@ -62,6 +81,10 @@ async function refreshDataList() {
       url: 'account-types/list',
       key: 'accountTypes',
       options: { t },
+      pagination: { 
+        page: page.value, 
+        limit: limit.value 
+      },
     });
   } catch (error) {
     // FIXME: ajustar esse toast de acordo com as outras telas profile e settings

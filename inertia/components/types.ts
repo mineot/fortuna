@@ -35,27 +35,6 @@ export type InputTypes =
   | 'url'
   | 'week';
 
-// TABLE
-
-export type TableDataActionTypes = 'edit' | 'delete';
-
-export type TableDataAction = {
-  type: TableDataActionTypes;
-  title: string;
-  onAction: (action: TableDataActionTypes, value: any) => void;
-};
-
-export type TableData = {
-  type: 'column' | 'action';
-  key: string;
-  align?: AlignTypes;
-  actions?: TableDataAction[];
-};
-
-export type TableHeader = TableData & { label?: string };
-export type TableRow = TableData & { value: any };
-export type TableMeta = { total: number; lastPage: number; currentPage: number };
-
 // FORM MODAL
 
 export type FormModalTitle = { create: string; edit: string };

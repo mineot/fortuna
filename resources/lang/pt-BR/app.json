@@ -17,7 +17,9 @@
     "search": "Pequisar",
     "successSave": "Salvo com sucesso.",
     "totalRecords": "Total de registros: {0}",
-    "yes": "Sim"
+    "yes": "Sim",
+    "page": "Página {0}",
+    "perPage": "{0} Por página"
   },
   "auth": {
     "login": "Entrar",

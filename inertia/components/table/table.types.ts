@@ -1,8 +1,13 @@
-import { type PropType } from 'vue';
+import type { PropType } from 'vue';
+import type { Meta } from '~/helpers/app.helper';
 
 export type TableAlign = 'left' | 'center' | 'right';
 export type TableActionSeverity = 'secondary' | 'danger';
 export type TableDataAction = Record<string, any>;
+
+export const PAGINATE_LIMITS = [5, 10, 20, 30, 40, 50, 100];
+export const PAGINATE_DEFAULT_LIMIT = 5;
+export const PAGINATE_FIRST_PAGE = 1;
 
 export const tableHeaderProps = {
   label: {
@@ -57,3 +62,13 @@ export const tableActionProps = {
     default: {},
   },
 };
+
+export const tablePaginateProps = {
+  meta: {
+    type: Object as PropType<Meta>,
+    required: false,
+    default: {},
+  },
+};
+
+export const tablePaginateEmits = ['page-change', 'limit-change'];

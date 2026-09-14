@@ -17,7 +17,9 @@
     "search": "Search",
     "successSave": "Saved successfully.",
     "totalRecords": "Total records: {0}",
-    "yes": "Yes"
+    "yes": "Yes",
+    "page": "Page {0}",
+    "perPage": "{0} Per page"
   },
   "auth": {
     "login": "Login",
